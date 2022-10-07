@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func GenerateToken(user_id uint) (string, error) {
@@ -22,7 +22,7 @@ func GenerateToken(user_id uint) (string, error) {
 	claims["authorized"] = true
 	claims["user_id"] = user_id
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 }
 

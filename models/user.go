@@ -2,7 +2,7 @@ package models
 
 import (
 	"crypto/bcrypt"
-	"fmt"
+	"errors"
 	"html"
 	"strings"
 
@@ -45,18 +45,28 @@ func LoginCheck(username string, password string) (string, error) {
 	u := User{}
 	err = DB.Model(User{}).Where("username = ?", username).Take(&u).Error
 	if err != nil {
-		fmt.Sprintf("khong ton tai user")
 		return "", err
 	}
 	err = VerifyPassword(password, u.Password)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		fmt.Sprintf("sai password")
 		return "", err
 	}
 	token, err := token.GenerateToken(u.ID)
 	if err != nil {
-		fmt.Sprintf("Loi token")
 		return "", err
 	}
 	return token, nil
+}
+
+func GetUserByID(uid uint) (User, error) {
+	var u User
+	if err := DB.First(&u, uid).Error; err != nil {
+		return u, errors.New("User not found!")
+	}
+	u.PrepareGive()
+	return u, nil
+}
+
+func (u *User) PrepareGive() {
+	u.Password = ""
 }
