@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"myshipper/models"
 	"net/http"
 
 	"myshipper/utils/token"
@@ -17,5 +18,18 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		ctx.Next()
+	}
+}
+
+func EnforceAuthenticatedMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("currentUser")
+		if exists && user.(models.User).ID != 0 {
+			return
+		} else {
+			err, _ := c.Get("authErr")
+			_ = c.AbortWithError(http.StatusUnauthorized, err.(error))
+			return
+		}
 	}
 }

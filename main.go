@@ -11,17 +11,20 @@ import (
 func main() {
 	models.ConnectDataBase()
 
-	r := gin.Default()
+	goGonicEngine := gin.Default()
 
-	public := r.Group("/api")
+	public := goGonicEngine.Group("/api")
 
 	public.POST("/register", controllers.Register)
 	public.POST("/login", controllers.Login)
 
-	protected := r.Group("/api/admin")
+	protected := goGonicEngine.Group("/api/admin")
 	protected.Use(middlewares.JwtAuthMiddleware())
-	protected.GET("/user", controllers.CurrentUser)
+	//protected.GET("/user", controllers.CurrentUser)
 
-	r.Run(":5052")
+	apiRouteGroup := goGonicEngine.Group("/api")
+	controllers.RegisterProductRoutes(apiRouteGroup.Group("/products"))
+
+	goGonicEngine.Run(":5052")
 
 }

@@ -15,6 +15,7 @@ type User struct {
 	gorm.Model
 	Username string `gorm:"size:255;not null;unique" json:"username"`
 	Password string `gorm:"size:255;not null;" json:"password"`
+	Roles    []Role `gorm:"many2many:users_roles;"`
 }
 
 func (u *User) SaveUser() (*User, error) {
@@ -69,4 +70,16 @@ func GetUserByID(uid uint) (User, error) {
 
 func (u *User) PrepareGive() {
 	u.Password = ""
+}
+
+func (u *User) IsAdmin() bool {
+	for _, role := range u.Roles {
+		if role.Name == "ROLE_ADMIN" {
+			return true
+		}
+	}
+	return false
+}
+func (u *User) IsNotAdmin() bool {
+	return !u.IsAdmin()
 }

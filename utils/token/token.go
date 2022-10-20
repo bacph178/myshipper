@@ -37,8 +37,8 @@ func TokenValid(c *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	return nil
 
+	return nil
 }
 func ExtractToken(c *gin.Context) string {
 	token := c.Query("token")
