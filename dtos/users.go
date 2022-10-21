@@ -24,6 +24,18 @@ func CreateLoginSuccessful(user *models.User) map[string]interface{} {
 	}
 	return map[string]interface{}{
 		"success": true,
-		"token":
+		"token":   user.GenerateJwtToken(),
+		"user": map[string]interface{}{
+			"username": user.Username,
+			"id":       user.ID,
+			"roles":    roles,
+		},
+	}
+}
+
+func GetUserBasicInfo(user models.User) map[string]interface{} {
+	return map[string]interface{}{
+		"id":       user.ID,
+		"username": user.Username,
 	}
 }

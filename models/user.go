@@ -3,8 +3,11 @@ package models
 import (
 	"crypto/bcrypt"
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
 	"html"
+	"os"
 	"strings"
+	"time"
 
 	"myshipper/utils/token"
 
@@ -13,27 +16,30 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"size:255;not null;unique" json:"username"`
-	Password string `gorm:"size:255;not null;" json:"password"`
-	Roles    []Role `gorm:"many2many:users_roles;"`
+	Username  string `gorm:"size:255;not null;unique" json:"username"`
+	Password  string `gorm:"size:255;not null;" json:"password"`
+	Roles     []Role `gorm:"many2many:users_roles;"`
+	FirstName string `gorm:"varchar(255);not null"`
+	LastName  string `gorm:"varchar(255);not null"`
+	Email     string `gorm:"column:email;unique_index"`
 }
 
-func (u *User) SaveUser() (*User, error) {
+func (user *User) SaveUser() (*User, error) {
 	var err error
-	err = DB.Create(&u).Error
+	err = DB.Create(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
-	return u, nil
+	return user, nil
 }
 
-func (u *User) BeforeSave() error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+func (user *User) BeforeSave() error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	u.Password = string(hashedPassword)
-	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
+	user.Password = string(hashedPassword)
+	user.Username = html.EscapeString(strings.TrimSpace(user.Username))
 	return nil
 }
 
@@ -68,18 +74,41 @@ func GetUserByID(uid uint) (User, error) {
 	return u, nil
 }
 
-func (u *User) PrepareGive() {
-	u.Password = ""
+func (user *User) PrepareGive() {
+	user.Password = ""
 }
 
-func (u *User) IsAdmin() bool {
-	for _, role := range u.Roles {
+func (user *User) IsAdmin() bool {
+	for _, role := range user.Roles {
 		if role.Name == "ROLE_ADMIN" {
 			return true
 		}
 	}
 	return false
 }
-func (u *User) IsNotAdmin() bool {
-	return !u.IsAdmin()
+
+func (user *User) IsNotAdmin() bool {
+	return !user.IsAdmin()
+}
+
+func (user *User) GenerateJwtToken() string {
+	jwtToken := jwt.New(jwt.SigningMethodHS512)
+	var roles []string
+	for _, role := range user.Roles {
+		roles = append(roles, role.Name)
+	}
+	jwtToken.Claims = jwt.MapClaims{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"roles":    roles,
+		"exp":      time.Now().Add(time.Hour * 24 * 90).Unix(),
+	}
+	returnToken, _ := jwtToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	return returnToken
+}
+
+func (user *User) IsValidPassword(password string) error {
+	bytePassword := []byte(password)
+	byteHashedPassword := []byte(user.Password)
+	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
 }
