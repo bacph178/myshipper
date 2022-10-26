@@ -3,7 +3,7 @@ package models
 import "github.com/jinzhu/gorm"
 
 type Address struct {
-	gorm.DB
+	gorm.Model
 	StreetAddress string  `gorm:"not null"`
 	City          string  `gorm:"not null"`
 	Country       string  `gorm:"not null"`

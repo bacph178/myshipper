@@ -1,9 +1,16 @@
 package services
 
-import "myshipper/models"
+import (
+	"myshipper/infrastructure"
+)
 
 func CreateOne(data interface{}) error {
-	database := models.DB
+	database := infrastructure.GetDb()
 	err := database.Create(data).Error
+	return err
+}
+func SaveOne(data interface{}) error {
+	database := infrastructure.GetDb()
+	err := database.Save(data).Error
 	return err
 }

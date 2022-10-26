@@ -93,3 +93,16 @@ func CreateBadRequestErrorDto(err error) ErrorDto {
 	}
 	return res
 }
+func CreateSuccessWithMessageDto(message string) interface{} {
+	return CreateSuccessWithMessagesDto([]string{message})
+}
+func CreateSuccessWithMessagesDto(messages []string) interface{} {
+	return gin.H{
+		"success":      true,
+		"full_mesages": messages,
+	}
+}
+func CreateSuccessDto(result map[string]interface{}) map[string]interface{} {
+	result["success"] = true
+	return result
+}

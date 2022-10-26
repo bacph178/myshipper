@@ -9,7 +9,7 @@ func FetchProductsPage(page int, pageSize int) ([]models.Product, int, []int, er
 	tx := database.Begin()
 	database.Model(&products).Count(&count)
 	database.Offset((page - 1) * pageSize).Limit(pageSize).Find(&products)
-	tx.Model(&products).Preload("Tags").Preload("Categories").Preload("Images").Order("created_at desc").Offset((page - 1) * page_size).Limit(page_size).Find(&products)
+	tx.Model(&products).Preload("Tags").Preload("Categories").Preload("Images").Order("created_at desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&products)
 	commentCount := make([]int, len(products))
 	for index, product := range products {
 		commentCount[index] = tx.Model(&product).Association("Comments").Count()

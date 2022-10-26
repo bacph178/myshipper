@@ -6,7 +6,7 @@ type Order struct {
 	gorm.DB
 	OrderStatus     int `gorm:"default:0"`
 	TrackingNumber  string
-	OrderItem       []OrderItem `gorm:"foreignKey:OrderId"`
+	OrderItems      []OrderItem `gorm:"foreignKey:OrderId"`
 	Address         Address     `gorm:"association_foreignkey:AddressId:"`
 	AddressId       uint
 	User            User `gorm:"foreignKey:UserId:"`
