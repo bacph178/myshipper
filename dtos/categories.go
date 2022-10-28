@@ -36,3 +36,7 @@ func CreateCategoryDto(category models.Category) map[string]interface{} {
 		"image_urls":  imageUrls,
 	}
 }
+
+func CreateCategoryCreatedDto(category models.Category) map[string]interface{} {
+	return CreateSuccessWithDtoAndMessageDto(CreateCategoryDto(category), "Category created successfully")
+}

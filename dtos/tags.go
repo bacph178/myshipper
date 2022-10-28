@@ -41,3 +41,7 @@ func CreateTagDto(tag models.Tag) map[string]interface{} {
 		"image_urls":  imageUrls,
 	}
 }
+
+func CreateTagCreatedDto(tag models.Tag) map[string]interface{} {
+	return CreateSuccessWithDtoAndMessageDto(CreateTagDto(tag), "Tag created successfully")
+}
