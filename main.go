@@ -75,6 +75,8 @@ func create(database *gorm.DB) {
 	drop(database)
 	migrate(database)
 	addDbConstraints(database)
+	seeds.ImportProduct(database)
+	os.Exit(0)
 }
 
 func main() {
@@ -113,6 +115,7 @@ func main() {
 		}
 	}
 	migrate(database)
+	seeds.ImportProduct(database)
 	goGonicEngine := gin.Default()
 
 	goGonicEngine.Use(cors.Default())

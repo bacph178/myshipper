@@ -1,9 +1,12 @@
 package services
 
-import "myshipper/models"
+import (
+	"myshipper/infrastructure"
+	"myshipper/models"
+)
 
 func FetchProductsPage(page int, pageSize int) ([]models.Product, int, []int, error) {
-	database := models.DB
+	database := infrastructure.GetDb()
 	var products []models.Product
 	var count int
 	tx := database.Begin()

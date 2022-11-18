@@ -21,10 +21,10 @@ func OpenDbConnection() *gorm.DB {
 	password := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
+	//port := os.Getenv("DB_PORT")
 	var db *gorm.DB
 	var err error
-	databaseUrl := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, dbName)
+	databaseUrl := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, username, password, dbName)
 	//databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", username, password, host, port, dbName)
 	println(databaseUrl)
 	db, err = gorm.Open(dialect, databaseUrl)

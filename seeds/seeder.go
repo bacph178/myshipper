@@ -2,11 +2,14 @@ package seeds
 
 import (
 	"crypto/bcrypt"
+	"fmt"
 	"github.com/icrowley/fake"
 	"github.com/jinzhu/gorm"
+	"github.com/xuri/excelize/v2"
 	"math/rand"
 	"myshipper/infrastructure"
 	"myshipper/models"
+	"strconv"
 	"time"
 )
 
@@ -256,4 +259,41 @@ func Seed() {
 	seedComments(db)
 	seedAddresses(db)
 	seedOrders(db)
+}
+
+func ImportProduct(db *gorm.DB) {
+	f, err := excelize.OpenFile("Product.xlsx")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer func() {
+		// Close the spreadsheet.
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	// Get value from cell by given worksheet name and cell reference.
+	for i := 2; i < 236; i++ {
+		cell, err := f.GetCellValue("Sheet1", "B"+strconv.Itoa(i))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(cell)
+	}
+
+	//fmt.Println(cell)
+	//// Get all the rows in the Sheet1.
+	//rows, err := f.GetRows("Sheet1")
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//for _, row := range rows {
+	//	for _, colCell := range row {
+	//		fmt.Print(colCell, "\t")
+	//	}
+	//	fmt.Println()
+	//}
 }
