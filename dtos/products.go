@@ -53,6 +53,8 @@ func CreateProductDto(product *models.Product, commentCount int) map[string]inte
 		"slug":       product.Slug,
 		"price":      product.Price,
 		"stock":      product.Stock,
+		"code":       product.Code,
+		"weight":     product.Weight,
 		"tags":       tags,
 		"categories": categories,
 		"image_urls": images,

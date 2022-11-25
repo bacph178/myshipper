@@ -275,25 +275,49 @@ func ImportProduct(db *gorm.DB) {
 	}()
 	// Get value from cell by given worksheet name and cell reference.
 	for i := 2; i < 236; i++ {
-		cell, err := f.GetCellValue("Sheet1", "B"+strconv.Itoa(i))
-		if err != nil {
+		name, nameErr := f.GetCellValue("Sheet1", "D"+strconv.Itoa(i))
+		if nameErr != nil {
+			fmt.Println(nameErr)
+			return
+		}
+		stockString, stockStringErr := f.GetCellValue("Sheet1", "H"+strconv.Itoa(i))
+		if stockStringErr != nil {
+			fmt.Println(stockStringErr)
+			return
+		}
+		stock, stockErr := strconv.Atoi(stockString)
+		if stockErr != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(cell)
+		priceString, priceStringErr := f.GetCellValue("Sheet1", "F"+strconv.Itoa(i))
+		if priceStringErr != nil {
+			fmt.Println(priceStringErr)
+			return
+		}
+		price, priceErr := strconv.Atoi(priceString)
+		if priceErr != nil {
+			fmt.Println(priceErr)
+			return
+		}
+		description, descriptionErr := f.GetCellValue("Sheet1", "U"+strconv.Itoa(i))
+		if descriptionErr != nil {
+			fmt.Println(descriptionErr)
+			return
+		}
+		code, codeErr := f.GetCellValue("Sheet1", "C"+strconv.Itoa(i))
+		if codeErr != nil {
+			fmt.Println(codeErr)
+			return
+		}
+		product := &models.Product{
+			Name:        name,
+			Description: description,
+			Stock:       stock,
+			Price:       price,
+			Code:        code,
+			Weight:      50,
+		}
+		db.Set("gorm:association_autoupdate", false).Create(&product)
 	}
-
-	//fmt.Println(cell)
-	//// Get all the rows in the Sheet1.
-	//rows, err := f.GetRows("Sheet1")
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
-	//for _, row := range rows {
-	//	for _, colCell := range row {
-	//		fmt.Print(colCell, "\t")
-	//	}
-	//	fmt.Println()
-	//}
 }

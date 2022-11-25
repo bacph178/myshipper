@@ -8,9 +8,11 @@ import (
 type Product struct {
 	gorm.Model
 	Name        string       `gorm:"size:280;not null"`
+	Code        string       `gorm:"size:280;not null"`
 	Slug        string       `gorm:"unique_index;not null"`
 	Price       int          `gorm:"not null"`
 	Stock       int          `gorm:"not null"`
+	Weight      int          `gorm:"not null"`
 	Comments    []Comment    `gorm:"foreignKey:ProductId"`
 	Tags        []Tag        `gorm:"many2many:products_tags;"`
 	Images      []FileUpload `gorm:"foreignKey:ProductId"`

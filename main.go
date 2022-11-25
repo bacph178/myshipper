@@ -90,10 +90,6 @@ func main() {
 	args := os.Args
 	if len(args) > 1 {
 		first := args[1]
-		second := ""
-		if len(args) > 2 {
-			second = args[2]
-		}
 		if first == "create" {
 			create(database)
 		} else if first == "seed" {
@@ -101,21 +97,37 @@ func main() {
 			os.Exit(0)
 		} else if first == "migrate" {
 			migrate(database)
+		} else if first == "import" {
+			seeds.ImportProduct(database)
+		}
+		second := ""
+		if len(args) > 2 {
+			second = args[2]
 		}
 
 		if second == "seed" {
 			seeds.Seed()
 			os.Exit(0)
-		} else if first == "migrate" {
+		} else if second == "migrate" {
 			migrate(database)
+		} else if second == "import" {
+			seeds.ImportProduct(database)
+		}
+
+		third := ""
+		if len(args) > 3 {
+			third = args[3]
+		}
+		if third == "import" {
+			seeds.ImportProduct(database)
 		}
 
 		if first != "" && second == "" {
 			os.Exit(0)
 		}
 	}
-	migrate(database)
-	seeds.ImportProduct(database)
+	//migrate(database)
+
 	goGonicEngine := gin.Default()
 
 	goGonicEngine.Use(cors.Default())
